@@ -34,7 +34,7 @@ Main code for pystrava
 import logging
 from requests import Session
 from bs4 import BeautifulSoup as Bfs
-from urllib.parse import quote
+from urllib.parse import quote, parse_qsl, urlparse
 from copy import copy
 from stravalib import Client
 from .constants import User, HEADERS, SITE
@@ -66,9 +66,9 @@ class StravaAuthenticator:
         self.user = User(client_id, client_secret, email, password)
         self._scope = scope
         self._callback = callback
-        self.session = Session()
-        self.session.headers.update(HEADERS)
-        self.login_headers = {}
+        self._session = Session()
+        self._session.headers.update(HEADERS)
+        self._login_headers = {}
 
     def __populate_url_params(self):
         params = {'client_id': self.user.client_id,
@@ -79,52 +79,51 @@ class StravaAuthenticator:
         return params
 
     def _authorize(self):
-        authorize_url = f'{SITE}/oauth/authorize'
-        authorize_response = self.session.get(url=authorize_url,
-                                              params=self.__populate_url_params())
+        authorize_response = self._session.get(url=f'{SITE}/oauth/authorize',
+                                               params=self.__populate_url_params())
         return authorize_response
 
     def _get_login_details(self):
         login_url = f'{SITE}/login'
-        login_response = self.session.get(login_url)
+        login_response = self._session.get(login_url)
         login_form = {
             'authenticity_token': self._get_csrf_token(login_response.text),
             'email': self.user.email,
             'password': self.user.password,
             'utf8': '✓'}
-        self.login_headers = copy(self.session.headers)
-        self.login_headers.update({'Referer': login_url})
+        self._login_headers = copy(self._session.headers)
+        self._login_headers.update({'Referer': login_url})
         return login_form
 
     def _post_session(self):
         login_form = self._get_login_details()
-        session_response = self.session.post(f'{SITE}/session',
-                                             data=login_form,
-                                             headers=self.login_headers)
+        session_response = self._session.post(url=f'{SITE}/session',
+                                              data=login_form,
+                                              headers=self._login_headers)
         return session_response
 
     def _accept_application(self):
-        headers = self.login_headers
-        auth_form = {'authenticity_token': self._get_csrf_token(self._post_session().text),
+        headers = self._login_headers
+        post_session = self._post_session()
+        auth_form = {'authenticity_token': self._get_csrf_token(post_session.text),
                      'write': 'on'}
         params = self.__populate_url_params()
         params.update({'redirect_uri': self._callback})
-        auth_response = self.session.post(f'{SITE}/oauth/accept_application',
-                                          params=params,
-                                          data=auth_form,
-                                          headers=headers.update({'Referer': self._authorize().url}),
-                                          allow_redirects=False)
+        auth_response = self._session.post(url=f'{SITE}/oauth/accept_application',
+                                           params=params,
+                                           data=auth_form,
+                                           headers=headers.update({'Referer': self._authorize().url}),
+                                           allow_redirects=False)
         return auth_response
 
     def _get_code(self):
         auth_response = self._accept_application()
-        location_code = auth_response.headers.get('location')
-        exchange_dict = {data.split('=')[0]: data.split('=')[1] for data in
-                         location_code.split('&')[1:]}
-        exchange_post = self.session.post(f'{SITE}/oauth/token',
-                                     data={'code': exchange_dict.get('code'),
-                                           'client_id': self.user.client_id,
-                                           'client_secret': self.user.client_secret})
+        location_url = auth_response.headers.get('location')
+        code = dict(parse_qsl(urlparse(location_url).query)).get('code')
+        exchange_post = self._session.post(url=f'{SITE}/oauth/token',
+                                           data={'code': code,
+                                                 'client_id': self.user.client_id,
+                                                 'client_secret': self.user.client_secret})
         return exchange_post
 
     @property
@@ -145,6 +144,3 @@ class Strava:
         authenticated = StravaAuthenticator(client_id, client_secret, callback, scope, email, password)
         strava = Client(access_token=authenticated.access_token)
         return strava
-
-
-

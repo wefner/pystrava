@@ -7,3 +7,6 @@
 #
 # Please use Pipfile to update the requirements.
 #
+beautifulsoup4==4.6.3
+requests==2.19.1
+stravalib==0.9.4

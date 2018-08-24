@@ -42,17 +42,6 @@ def test():
     emojize = bootstrap()
     clean_up('test-output')
     os.mkdir('test-output')
-    # exit_code = execute_command('pipenv lock')
-    # success = not exit_code
-    # if success:
-    #     LOGGER.info('Successfully created lock file %s',
-    #                  emojize(':white_heavy_check_mark:'),
-    #                  emojize(':thumbs_up:'))
-    # else:
-    #     LOGGER.error('%s Errors creating lock file! %s',
-    #                   emojize(':cross_mark:'),
-    #                   emojize(':crying_face:'))
-    #     raise SystemExit(1)
     save_requirements()
     exit_code = execute_command('tox')
     success = not exit_code
