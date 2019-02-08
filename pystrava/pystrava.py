@@ -102,17 +102,22 @@ class StravaAuthenticator:
                                               headers=self._login_headers)
         return session_response
 
+    def _generate_auth_scope(self):
+        scope = {scope: 'on' for scope in self._scope.split(',')}
+        return scope
+
     def _accept_application(self):
         headers = self._login_headers
         post_session = self._post_session()
-        auth_form = {'authenticity_token': self._get_csrf_token(post_session.text),
-                     'write': 'on'}
+        auth_form = {'authenticity_token': self._get_csrf_token(post_session.text)}
+        auth_form.update(self._generate_auth_scope())
         params = self.__populate_url_params()
         params.update({'redirect_uri': self._callback})
         auth_response = self._session.post(url=f'{SITE}/oauth/accept_application',
                                            params=params,
                                            data=auth_form,
-                                           headers=headers.update({'Referer': self._authorize().url}),
+                                           headers=headers.update(
+                                               {'Referer': self._authorize().url}),
                                            allow_redirects=False)
         return auth_response
 
@@ -122,6 +127,7 @@ class StravaAuthenticator:
         code = dict(parse_qsl(urlparse(location_url).query)).get('code')
         exchange_post = self._session.post(url=f'{SITE}/oauth/token',
                                            data={'code': code,
+                                                 'grant_type': 'authorization_code',
                                                  'client_id': self.user.client_id,
                                                  'client_secret': self.user.client_secret})
         return exchange_post
@@ -142,5 +148,5 @@ class StravaAuthenticator:
 class Strava:
     def __new__(cls, client_id, client_secret, callback, scope, email, password):
         authenticated = StravaAuthenticator(client_id, client_secret, callback, scope, email, password)
-        strava = Client(access_token=authenticated.access_token)
-        return strava
+        strava_client = Client(access_token=authenticated.access_token)
+        return strava_client

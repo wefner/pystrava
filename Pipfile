@@ -31,9 +31,9 @@ emoji = "==0.5.0"
 
 
 [packages]
-beautifulsoup4 = "==4.6.3"
-requests = "==2.19.1"
-stravalib = "==0.9.4"
+beautifulsoup4 = "==4.7.1"
+requests = "==2.21.0"
+stravalib = "==0.10.2"
 
 
 [requires]

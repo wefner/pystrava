@@ -39,5 +39,12 @@ User = namedtuple('User', ['client_id',
                            'email',
                            'password'])
 
+Token = namedtuple('Token', ['access_token',
+                             'token_type',
+                             'expires_at',
+                             'expires_in',
+                             'refresh_token',
+                             'athlete'])
+
 SITE = 'https://www.strava.com'
 HEADERS = {'DNT': '1', 'Host': urlparse(SITE).netloc}

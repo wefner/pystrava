@@ -33,7 +33,7 @@ Import all parts from pystrava here
 """
 from ._version import __version__
 from .constants import *
-from .pystrava import StravaAuthenticator
+from .pystrava import StravaAuthenticator, Strava
 
 __author__ = '''Oriol Fabregas <fabregas.oriol@gmail.com>'''
 __docformat__ = '''google'''
@@ -47,3 +47,4 @@ __status__ = '''Development'''  # "Prototype", "Development", "Production".
 # This is to 'use' the module(s), so lint doesn't complain
 assert __version__
 assert StravaAuthenticator
+assert Strava
