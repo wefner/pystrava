@@ -37,7 +37,6 @@ def upload():
         LOGGER.error('Errors caught on building the artifact, bailing out...')
         raise SystemExit(1)
     upload_command = ('twine upload dist/* '
-                      '-u pypi-upload '
                       '--skip-existing '
                       '--repository-url https://upload.pypi.org/legacy/')
     LOGGER.info('Trying to upload built artifact...')
