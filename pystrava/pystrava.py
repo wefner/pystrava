@@ -37,7 +37,7 @@ from bs4 import BeautifulSoup as Bfs
 from urllib.parse import parse_qsl, urlparse
 from copy import copy
 from stravalib import Client as OriginalStrava
-from constants import User, Token, HEADERS, SITE, INVALID_TOKEN_MSG
+from .constants import User, Token, HEADERS, SITE, INVALID_TOKEN_MSG
 
 
 __author__ = '''Oriol Fabregas <fabregas.oriol@gmail.com>'''
