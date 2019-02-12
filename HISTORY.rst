@@ -3,6 +3,13 @@
 History
 -------
 
+0.2.1 (2019-02-12)
+------------------
+
+* Retrieve new access token if expired transparently
+* Logging
+* Docs
+
 0.2.0 (2019-02-08)
 ------------------
 
