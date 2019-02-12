@@ -43,8 +43,12 @@ Token = namedtuple('Token', ['access_token',
                              'token_type',
                              'expires_at',
                              'expires_in',
-                             'refresh_token',
-                             'athlete'])
+                             'refresh_token'])
 
 SITE = 'https://www.strava.com'
 HEADERS = {'DNT': '1', 'Host': urlparse(SITE).netloc}
+
+INVALID_TOKEN_MSG = {"message": "Authorization Error",
+                     "errors": [{"resource": "Athlete",
+                                 "field":"access_token",
+                                 "code":"invalid"}]}

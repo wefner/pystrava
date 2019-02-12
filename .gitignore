@@ -1,5 +1,7 @@
 # Packages
 *.egg
+.eggs/
+.kitchen/
 *.egg-info
 /dist/
 /build/
