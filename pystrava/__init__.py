@@ -48,3 +48,4 @@ __status__ = '''Development'''  # "Prototype", "Development", "Production".
 assert __version__
 assert StravaAuthenticator
 assert Strava
+assert constants

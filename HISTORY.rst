@@ -3,6 +3,12 @@
 History
 -------
 
+0.2.2 (2019-02-17)
+------------------
+
+* Fixed bug that gets `redirects_uri`
+* Fixed bug about relative imports
+
 0.2.1 (2019-02-12)
 ------------------
 

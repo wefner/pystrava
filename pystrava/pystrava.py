@@ -85,6 +85,7 @@ class StravaAuthenticator:
         self._scope = scope
         self._callback = callback
         self._session = Session()
+        self._auth_url = None
         self._session.headers.update(HEADERS)
         self._login_headers = {}
         self._authenticate()
@@ -122,6 +123,7 @@ class StravaAuthenticator:
         self._logger.info("Authorizing application")
         authorize_response = self._session.get(url=f'{SITE}/oauth/authorize',
                                                params=self.__populate_url_params())
+        self._auth_url = authorize_response.url
         return authorize_response
 
     def _get_login_details(self):
@@ -189,7 +191,7 @@ class StravaAuthenticator:
                                            params=params,
                                            data=auth_form,
                                            headers=headers.update(
-                                               {'Referer': self._authorize().url}),
+                                               {'Referer': self._auth_url}),
                                            allow_redirects=False)
         return auth_response
 
